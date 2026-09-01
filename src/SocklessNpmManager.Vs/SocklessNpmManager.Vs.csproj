@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>SocklessNpmManager.Vs</RootNamespace>
+    <UseWpf>true</UseWpf>
+    <Nullable>enable</Nullable>
+
+    <!-- VisualStudio.Extensibility (out-of-process) extension. -->
+    <TargetVsVersion>17.14</TargetVsVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.14.40608" />
+    <PackageReference Include="Microsoft.VisualStudio.Extensibility.Build" Version="17.14.40608" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SocklessNpmManager.Core\SocklessNpmManager.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="ToolWindows\NpmManagerToolWindowControl.xaml" />
+    <Page Remove="ToolWindows\NpmManagerToolWindowControl.xaml" />
+  </ItemGroup>
+
+</Project>

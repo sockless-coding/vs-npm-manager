@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>SocklessNpmManager.Core</RootNamespace>
+    <AssemblyName>SocklessNpmManager.Core</AssemblyName>
+    <!-- Keep this library free of any Visual Studio dependency so additional IDE
+         hosts (Rider, a classic VSSDK build, a CLI) can consume it unchanged. -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SocklessNpmManager.Core.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SemanticVersioning" Version="2.0.2" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+
+</Project>

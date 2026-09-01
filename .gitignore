@@ -1,0 +1,33 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# VSIX / extension build
+*.vsix
+*.binlog
+
+# Test results
+[Tt]est[Rr]esults/
+*.trx
+coverage/
+*.coverage
+*.coveragexml
+
+# NuGet
+*.nupkg
+.nuget/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local tooling
+scratchpad/
+node_modules/

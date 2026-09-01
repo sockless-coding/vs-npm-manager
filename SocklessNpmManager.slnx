@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SocklessNpmManager.Core.Tests/SocklessNpmManager.Core.Tests.csproj" />
+    <Project Path="src/SocklessNpmManager.Core/SocklessNpmManager.Core.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/SocklessNpmManager.Harness/SocklessNpmManager.Harness.csproj" />
+  </Folder>
+</Solution>

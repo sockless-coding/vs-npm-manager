@@ -1,0 +1,7 @@
+{
+  "SocklessNpmManager.OpenManager.DisplayName": "Manage npm Packages...",
+  "SocklessNpmManager.OpenManagerForSolution.DisplayName": "Manage npm Packages...",
+  "SocklessNpmManager.OpenManagerForProject.DisplayName": "Manage npm Packages...",
+  "SocklessNpmManager.RefreshCommand.DisplayName": "Refresh npm Packages",
+  "SocklessNpmManager.ToolWindow.Title": "npm Package Manager"
+}
