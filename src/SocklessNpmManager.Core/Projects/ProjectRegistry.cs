@@ -28,7 +28,10 @@ namespace SocklessNpmManager.Core.Projects
     /// </summary>
     public sealed class ProjectRegistry : IDisposable
     {
-        private static readonly string[] PruneDirs = { "node_modules", ".git", ".hg", ".svn" };
+        private static readonly string[] PruneDirs =
+        {
+            "node_modules", ".git", ".hg", ".svn", "bin", "obj", ".vs", ".vscode", ".idea",
+        };
 
         private readonly IHostBridge _host;
         private List<WorkspaceProject> _projects = new List<WorkspaceProject>();

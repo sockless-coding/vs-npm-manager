@@ -46,6 +46,32 @@ implementation.
 ## Requirements
 
 - Visual Studio 2026 with the *Visual Studio extension development* workload.
+
+### .NET runtime
+
+The extension targets **`net8.0-windows8.0`**, driven by the `$(NpmVsDotnet)`
+property in `SocklessNpmManager.Vs.csproj`.
+
+VisualStudio.Extensibility runs out-of-process extensions on **.NET 8 only** as of
+now — the VS Extensibility team is explicit about this on
+[issue #544](https://github.com/microsoft/VSExtensibility/issues/544) ("you
+shouldn't target anything above net8.0 … stick with net8.0-windows8.0"), and
+`net10.0` builds fail to run in VS 2026. .NET 10 host support is stated to be
+"coming in the near future".
+
+This isn't the same as shipping an end-of-life runtime: Visual Studio bundles the
+runtime the extension host uses, and Microsoft's
+[Feb 2025 policy](https://devblogs.microsoft.com/visualstudio/visualstudio-extensibility-managing-net-runtime-versions/)
+commits to keeping it in service. When VS moves the host to .NET 10, the migration
+here is one flag:
+
+```
+dotnet build -p:NpmVsDotnet=net10.0
+```
+
+which flips both the target framework and the `DotnetTargetVersions` manifest
+metadata. Everything else — all of `SocklessNpmManager.Core` — is `netstandard2.0`
+and unaffected.
 - Node.js + npm (and optionally Yarn / pnpm) on `PATH` for update checks, `npm audit`
   and installs. `npmManager.packageManagerPath` / `npmManager.nodePath` override the
   discovered executables.
@@ -79,27 +105,36 @@ dotnet run --project tools/SocklessNpmManager.Harness -- <path-to-a-workspace> e
   entry point, DI, `VsHostBridge` (config / DPAPI secrets / logger / file watch) and
   `NpmManagerSession` are wired to Core.
 
-**In progress**
+**In progress — the VS extension**
 
-- `OpenNpmManagerCommand` — **Manage npm Packages…** on the Extensions menu,
-  View › Other Windows, and the solution / project context menus.
-- `NpmManagerToolWindow` + Remote UI (`NpmManagerToolWindowControl.xaml`) showing the
-  **Installed** view: package list with requested → latest version and badges
-  (transitive / pinned / deprecated / vulnerable / just-released), a Refresh button,
-  and streamed enrichment.
-- `ScopeResolver` — resolves the open solution's projects to scope roots via the
-  Project Query API.
+- **Commands** — `OpenNpmManagerForSolutionCommand` (Extensions menu, View ›
+  Other Windows, solution context menu) scopes to every project in the solution;
+  `OpenNpmManagerForProjectCommand` (project context menu) scopes to the clicked
+  project. `ScopeResolver` resolves both via the Project Query API.
+- **Tool window** — `NpmManagerToolWindow` + Remote UI: the Browse / Installed /
+  Updates / Consolidate tabs, a toolbar (search, prerelease toggle, registry
+  picker), the package list, and a detail pane with the version / save-as /
+  add-as pickers, a per-`package.json` checklist, the Install / Update /
+  Uninstall / Pin / Unpin actions, advisories, dependency groups and the readme.
+  Update All, streamed enrichment, the no-package-manager banner and a toast are
+  wired.
+
+**Remote UI notes** (learned from running in VS 2026)
+
+- `BooleanToVisibilityConverter` and binding `StringFormat` do not work in Remote UI.
+  Conditional visibility is exposed as `System.Windows.Visibility` properties on the
+  view-models; computed label strings replace `StringFormat`.
+- VS theming comes from *implicit* styles (`<Style TargetType="Button" BasedOn=…>`)
+  in the root `Grid.Resources`, per Microsoft's documented pattern.
+- The data context loads in `RemoteUserControl.ControlLoadedAsync` so it captures the
+  right `SynchronizationContext` for streamed updates.
 
 **Not yet built**
 
-- Per-node scoping: the command currently always scopes to the whole solution;
-  reading the clicked project vs solution node (via `IClientContext` /
-  `ClientContextKey.Shell.ActiveSelectionPath`) is next.
-- The Browse / Updates / Consolidate tabs, the package detail pane, and the
-  install / update / uninstall / pin actions.
 - VisualStudio.Extensibility Settings API wiring (`VsHostConfig` currently returns
   the VS Code defaults), a real Output window pane, and a credential-entry dialog
   (`.npmrc` token auth already works; interactive entry does not yet).
+- The Installed tree (transitive nesting with "why"); the list is currently flat.
 
 ## License
 

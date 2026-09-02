@@ -1,19 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!--
+    ══ .NET runtime for the extension host ══════════════════════════════════════════════
+    VisualStudio.Extensibility out-of-process extensions currently run ONLY on .NET 8
+    (confirmed by the VS Extensibility team on issue #544, March 2026). VS 2026 bundles the
+    runtime for the extension host, so this is not tied to standalone .NET 8 support — when
+    Microsoft ships .NET 10 host support, flip $(NpmVsDotnet) below to `net10.0` and rebuild.
+    Nothing else changes: all domain logic lives in SocklessNpmManager.Core (netstandard2.0).
+  -->
   <PropertyGroup>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <NpmVsDotnet Condition="'$(NpmVsDotnet)' == ''">net8.0</NpmVsDotnet>
+    <TargetFramework>$(NpmVsDotnet)-windows8.0</TargetFramework>
     <RootNamespace>SocklessNpmManager.Vs</RootNamespace>
     <UseWpf>true</UseWpf>
     <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
 
-    <!-- VisualStudio.Extensibility (out-of-process) extension. -->
-    <TargetVsVersion>17.14</TargetVsVersion>
+    <!-- Transitive advisories from the 17.14 SDK's pinned MessagePack; NU1510 for a package
+         implicitly available on Windows Desktop; VSTHRD001 for the SynchronizationContext.Post
+         used to marshal Remote UI updates; VSEXT0010 only fires when NpmVsDotnet != net8.0. -->
+    <NoWarn>$(NoWarn);NU1902;NU1903;NU1510;VSTHRD001;VSEXT0010</NoWarn>
+  </PropertyGroup>
+
+  <!-- Keeps the DotnetTargetVersions metadata in NpmManagerExtension.cs in sync with the TFM. -->
+  <PropertyGroup Condition="'$(NpmVsDotnet)' != 'net8.0'">
+    <DefineConstants>$(DefineConstants);NPMVS_NET_FUTURE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Extensibility.Sdk" Version="17.14.40608" />
     <PackageReference Include="Microsoft.VisualStudio.Extensibility.Build" Version="17.14.40608" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>

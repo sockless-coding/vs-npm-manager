@@ -1,12 +1,10 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.Extensibility;
-using SocklessNpmManager.Vs.Hosting;
 
 namespace SocklessNpmManager.Vs
 {
     /// <summary>The VisualStudio.Extensibility entry point for the npm Package Manager.</summary>
     [VisualStudioContribution]
-    internal sealed class NpmManagerExtension : Extension
+    public sealed class NpmManagerExtension : Extension
     {
         public override ExtensionConfiguration ExtensionConfiguration => new()
         {
@@ -15,13 +13,18 @@ namespace SocklessNpmManager.Vs
                 version: this.ExtensionAssemblyVersion,
                 publisherName: "sockless-coding",
                 displayName: "Sockless npm Package Manager",
-                description: "Visual npm package manager for Visual Studio — browse, install, update and consolidate packages."),
+                description: "Visual npm package manager for Visual Studio — browse, install, update and consolidate packages.")
+            {
+                // Driven by $(NpmVsDotnet) in the csproj — see the csproj header.
+                DotnetTargetVersions = new[]
+                {
+#if NPMVS_NET_FUTURE
+                    DotnetTarget.Custom("net10.0"),
+#else
+                    DotnetTarget.Net8,
+#endif
+                },
+            },
         };
-
-        protected override void InitializeServices(IServiceCollection serviceCollection)
-        {
-            base.InitializeServices(serviceCollection);
-            serviceCollection.AddSingleton<NpmManagerSession>();
-        }
     }
 }

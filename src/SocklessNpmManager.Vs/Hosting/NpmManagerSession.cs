@@ -9,14 +9,21 @@ namespace SocklessNpmManager.Vs.Hosting
     /// Process-lifetime singleton that owns the one <see cref="NpmManagerController"/> and the scope
     /// the manager is currently showing. Commands call <see cref="SetScopeAsync"/> to (re)target it;
     /// the tool window's view-models subscribe to the controller's events.
+    ///
+    /// Accessed via <see cref="Shared"/> rather than dependency injection so the contributions
+    /// (commands, tool window) can keep parameterless constructors.
     /// </summary>
     internal sealed class NpmManagerSession
     {
+        private static readonly Lazy<NpmManagerSession> Lazy = new(() => new NpmManagerSession());
+
+        public static NpmManagerSession Shared => Lazy.Value;
+
         private readonly SemaphoreSlim _initGate = new(1, 1);
         private readonly VsHostBridge _bridge;
         private NpmManagerController? _controller;
 
-        public NpmManagerSession()
+        private NpmManagerSession()
         {
             _bridge = new VsHostBridge(this);
         }

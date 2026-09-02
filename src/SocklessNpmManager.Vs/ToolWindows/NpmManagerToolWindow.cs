@@ -12,11 +12,13 @@ namespace SocklessNpmManager.Vs.ToolWindows
     internal sealed class NpmManagerToolWindow : ToolWindow
     {
         private readonly NpmManagerData _data;
+        private readonly SynchronizationContext? _ctorContext;
 
-        public NpmManagerToolWindow(NpmManagerSession session)
+        public NpmManagerToolWindow()
         {
             this.Title = "npm Package Manager";
-            _data = new NpmManagerData(session);
+            _ctorContext = SynchronizationContext.Current;
+            _data = new NpmManagerData(NpmManagerSession.Shared);
         }
 
         public override ToolWindowConfiguration ToolWindowConfiguration => new()
@@ -24,11 +26,12 @@ namespace SocklessNpmManager.Vs.ToolWindows
             Placement = ToolWindowPlacement.DocumentWell,
         };
 
-        public override Task InitializeAsync(CancellationToken cancellationToken) => _data.LoadAsync(cancellationToken);
+        public override Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
         public override Task<IRemoteUserControl> GetContentAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IRemoteUserControl>(new NpmManagerToolWindowControl(_data));
+            return Task.FromResult<IRemoteUserControl>(
+                new NpmManagerToolWindowControl(_data, _ctorContext ?? SynchronizationContext.Current));
         }
     }
 }

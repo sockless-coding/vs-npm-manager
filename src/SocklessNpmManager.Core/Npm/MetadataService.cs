@@ -90,6 +90,7 @@ namespace SocklessNpmManager.Core.Npm
                     ? null
                     : new DeprecationInfo { Reasons = new[] { manifest!.Deprecated! }, Message = manifest.Deprecated },
                 ReadmeMarkdown = TrimReadme(doc.Readme),
+                ReadmePlainText = ReadmeText.ToPlainText(TrimReadme(doc.Readme)),
                 Source = registryName,
             };
         }

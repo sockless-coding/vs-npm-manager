@@ -87,6 +87,9 @@ namespace SocklessNpmManager.Core.Model
         public string? LicenseUrl { get; set; }
         public string? LicenseExpression { get; set; }
         public string? ReadmeMarkdown { get; set; }
+
+        /// <summary>The readme rendered to plain text, for hosts that can't display Markdown.</summary>
+        public string? ReadmePlainText { get; set; }
         public IReadOnlyList<string> Tags { get; set; } = System.Array.Empty<string>();
         public IReadOnlyList<PackageDependencyGroup> DependencyGroups { get; set; } = System.Array.Empty<PackageDependencyGroup>();
         public DeprecationInfo? Deprecation { get; set; }
